@@ -2,50 +2,34 @@
 package platforms
 
 import (
+	"fmt"
 	"net/http"
-	"sync"
 
-	"github.com/beautiful-you/anniversary/wechat/cache"
-	"github.com/beautiful-you/anniversary/wechat/context"
-	"github.com/beautiful-you/anniversary/wechat/server"
+	"github.com/beautiful-you/anniversary/wechat"
+	"github.com/beautiful-you/anniversary/wechat/message"
 )
 
-// Wechat struct
-type Wechat struct {
-	Context *context.Context
+// SetComponentVerifyTicket 缓存该票据
+func SetComponentVerifyTicket(config *wechat.Config, rw http.ResponseWriter, req *http.Request) {
+	wc := wechat.NewWechat(config)
+	server := wc.GetServer(req, rw)
+	//设置接收消息的处理方法
+	server.SetMessageHandler(func(msg message.MixMessage) *message.Reply {
+		fmt.Println(msg.ComponentVerifyTicket)
+		return nil
+	})
+
+	//处理消息接收以及回复
+	err := server.Serve()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	//发送回复的消息
+	server.Send()
 }
 
-// Config for user
-type Config struct {
-	AppID          string // platforms appid
-	AppSecret      string // platforms AppSecret
-	Token          string // platforms Token
-	EncodingAESKey string // platforms EncodingAESKey
-	PayMchID       string // 支付 - 商户 ID
-	PayNotifyURL   string // 支付 - 接受微信支付结果通知的接口地址
-	PayKey         string // 支付 - 商户后台设置的支付 key
-	Cache          cache.Cache
-}
+// GetComponentVerifyTicket 获取该票据
+func GetComponentVerifyTicket() {
 
-// NewPlatform init
-func NewPlatform(cfg *Config) *Wechat {
-	context := new(context.Context)
-	copyConfigToContext(cfg, context)
-	return &Wechat{context}
-}
-func copyConfigToContext(cfg *Config, context *context.Context) {
-	context.AppID = cfg.AppID
-	context.AppSecret = cfg.AppSecret
-	context.Token = cfg.Token
-	context.EncodingAESKey = cfg.EncodingAESKey
-	context.Cache = cfg.Cache
-	context.SetAccessTokenLock(new(sync.RWMutex))
-	context.SetJsAPITicketLock(new(sync.RWMutex))
-}
-
-// GetServer 消息管理
-func (wc *Wechat) GetServer(req *http.Request, writer http.ResponseWriter) *server.Server {
-	wc.Context.Request = req
-	wc.Context.Writer = writer
-	return server.NewServer(wc.Context)
 }
