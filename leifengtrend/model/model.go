@@ -30,3 +30,27 @@ type LeifengtrendUser struct {
 	DeletedAt  time.Time `xorm:"deleted"`
 	Version    int64     `xorm:"version"`
 }
+
+// LeifengtrendTask 任务表
+type LeifengtrendTask struct {
+	UUID       string    `xorm:"varchar(36) notnull unique 'uuid'"` // uuid
+	ConfigUUID string    `xorm:"varchar(36) 'config_uuid'"`         // 所属活动的uuid
+	Name       string    `xorm:"varchar(64) 'name'"`                // 任务名字
+	Desc       string    `xorm:"varchar(64) 'desc'"`                // 任务描述
+	CreatedAt  int64     `xorm:"created"`
+	UpdatedAt  time.Time `xorm:"updated"`
+	DeletedAt  time.Time `xorm:"deleted"`
+	Version    int64     `xorm:"version"`
+}
+
+// LeifengtrendUserTask 用户领取的任务表
+type LeifengtrendUserTask struct {
+	UUID       string    `xorm:"varchar(36) notnull unique 'uuid'"` // uuid
+	ConfigUUID string    `xorm:"varchar(36) 'config_uuid'"`         // 所属活动的uuid
+	TaskUUID   string    `xorm:"varchar(36) 'task_uuid'"`           // 任务UUID
+	UserUUID   string    `xorm:"varchar(36) 'user_uuid'"`           // 任务UUID
+	CreatedAt  int64     `xorm:"created"`
+	UpdatedAt  time.Time `xorm:"updated"`
+	DeletedAt  time.Time `xorm:"deleted"`
+	Version    int64     `xorm:"version"`
+}
