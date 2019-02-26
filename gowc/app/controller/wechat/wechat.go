@@ -43,19 +43,20 @@ func (w *WeChat) AuthURL(c *gin.Context) {
 	resComponentAccessToken, err := platforms.ComponentAccessToken(lcfg.OW().AppID, lcfg.OW().AppSecret, cvt)
 	if err != nil {
 		fmt.Println(err)
-		c.Writer.WriteString("获取 ComponentAccessToken 出现错误")
+		c.Writer.WriteString("获取 ComponentAccessToken 出现错误, 错误信息：" + resPreAuthCode.ErrMsg)
 		return
 	}
 
 	resPreAuthCode, err := platforms.PreAuthCode(lcfg.OW().AppID, resComponentAccessToken.ComponentAccessToken)
 	if err != nil {
 		fmt.Println(err)
-		c.Writer.WriteString("获取 PreAuthCode 出现错误")
+		c.Writer.WriteString("获取 PreAuthCode 出现错误, 错误信息：" + resPreAuthCode.ErrMsg)
 		return
 	}
 
-	URL := fmt.Sprint(platforms.AuthURL, lcfg.OW().AppID, resPreAuthCode.PreAuthCode, RedirectURL)
-	c.Writer.WriteString(URL)
+	URL := fmt.Sprintf(platforms.AuthURL, lcfg.OW().AppID, resPreAuthCode.PreAuthCode, RedirectURL)
+	c.Header("Content-Type", "text/html; charset=utf-8")
+	c.String(200, "<a href='"+URL+"'>点击授权</a>")
 }
 
 // MessageWithEvent ... 消息与事件接收url
