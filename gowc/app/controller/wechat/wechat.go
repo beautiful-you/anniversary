@@ -43,7 +43,7 @@ func (w *WeChat) AuthURL(c *gin.Context) {
 	resComponentAccessToken, err := platforms.ComponentAccessToken(lcfg.OW().AppID, lcfg.OW().AppSecret, cvt)
 	if err != nil {
 		fmt.Println(err)
-		c.Writer.WriteString("获取 ComponentAccessToken 出现错误, 错误信息：" + resPreAuthCode.ErrMsg)
+		c.Writer.WriteString("获取 ComponentAccessToken 出现错误, 错误信息：" + resComponentAccessToken.ErrMsg)
 		return
 	}
 
