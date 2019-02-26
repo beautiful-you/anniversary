@@ -1,12 +1,11 @@
 package wechat
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"time"
 
-	"github.com/beautiful-you/anniversary/wechat/util"
+	"github.com/beautiful-you/anniversary/wechat/platforms"
 
 	"github.com/beautiful-you/anniversary/gowc/config"
 
@@ -22,10 +21,7 @@ type WeChat struct {
 
 // 接口信息
 const (
-	ComponentTokenURL = "https://api.weixin.qq.com/cgi-bin/component/api_component_token"
-	PreAuthCodeURL    = "https://api.weixin.qq.com/cgi-bin/component/api_create_preauthcode?component_access_token=%s"
-	AuthURL           = "https://mp.weixin.qq.com/safe/bindcomponent?action=bindcomponent&auth_type=3&no_scan=1&component_appid=%s&pre_auth_code=%s&redirect_uri=%s&auth_type=xxx&biz_appid=xxxx#wechat_redirect"
-	RedirectURL       = ""
+	RedirectURL = "http://am.jyacad.cc/wechat/public/account/auth_call"
 )
 
 var lcfg = new(config.Config)
@@ -35,61 +31,32 @@ func (w *WeChat) AuthCall(c *gin.Context) {
 
 }
 
-// ResComponentAccessToken ComponentAccessToken
-type ResComponentAccessToken struct {
-	util.CommonError
-	ComponentAccessToken string `json:"component_access_token"`
-	ExpiresIn            int64  `json:"expires_in"`
-}
-
-// ResPreAuthCode 预授权码
-type ResPreAuthCode struct {
-	util.CommonError
-	PreAuthCode string `json:"pre_auth_code"`
-	ExpiresIn   int64  `json:"expires_in"`
-}
-
 // AuthURL ... 授权地址
 func (w *WeChat) AuthURL(c *gin.Context) {
 	// 获取 component_verify_ticket
 	cvt := componentverifyticket()
 	if cvt == "" {
+		fmt.Println("获取不到缓存中的 component_verify_ticket")
 		c.Writer.WriteString("获取不到缓存中的 component_verify_ticket")
 		return
 	}
-	// 获取第三方平台 component_access_token
-	body, err := util.PostJSON(ComponentTokenURL, map[string]string{"component_appid": lcfg.OW().AppID, "component_appsecret": lcfg.OW().AppSecret, "component_verify_ticket": cvt})
-	if err != nil {
-		return
-	}
-	resComponentAccessToken := new(ResComponentAccessToken)
-	err = json.Unmarshal(body, &resComponentAccessToken)
-	if err != nil {
-		return
-	}
-	if resComponentAccessToken.ErrMsg != "" {
-		err = fmt.Errorf("get access_token error : errcode=%v , errormsg=%v", resComponentAccessToken.ErrCode, resComponentAccessToken.ErrMsg)
-		return
-	}
-	// 获取预授权码 pre_auth_code
-	body, err = util.PostJSON(ComponentTokenURL, map[string]string{"component_appid": lcfg.OW().AppID, "component_appsecret": lcfg.OW().AppSecret, "component_verify_ticket": cvt})
-	if err != nil {
-		return
-	}
-	resPreAuthCode := new(ResPreAuthCode)
-	err = json.Unmarshal(body, &resPreAuthCode)
-	if err != nil {
-		return
-	}
-	if resPreAuthCode.ErrMsg != "" {
-		err = fmt.Errorf("get auth_code error : errcode=%v , errormsg=%v", resComponentAccessToken.ErrCode, resComponentAccessToken.ErrMsg)
-		return
-	}
-	URL := fmt.Sprint(AuthURL, lcfg.OW().AppID, resPreAuthCode.PreAuthCode, RedirectURL)
-	c.Writer.WriteString(URL)
-	// cat := resComponentAccessToken.ComponentAccessToken
-	// PreAuthCode := "pre_auth_code"
 
+	resComponentAccessToken, err := platforms.ComponentAccessToken(lcfg.OW().AppID, lcfg.OW().AppSecret, cvt)
+	if err != nil {
+		fmt.Println(err)
+		c.Writer.WriteString("获取 ComponentAccessToken 出现错误")
+		return
+	}
+
+	resPreAuthCode, err := platforms.PreAuthCode(lcfg.OW().AppID, resComponentAccessToken.ComponentAccessToken)
+	if err != nil {
+		fmt.Println(err)
+		c.Writer.WriteString("获取 PreAuthCode 出现错误")
+		return
+	}
+
+	URL := fmt.Sprint(platforms.AuthURL, lcfg.OW().AppID, resPreAuthCode.PreAuthCode, RedirectURL)
+	c.Writer.WriteString(URL)
 }
 
 // MessageWithEvent ... 消息与事件接收url

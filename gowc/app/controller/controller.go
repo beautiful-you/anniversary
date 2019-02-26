@@ -6,10 +6,5 @@ import (
 
 // Controller 控制器
 type Controller struct {
-}
-
-// WeChat 执行测试任务
-func (ctr *Controller) WeChat() *wechat.WeChat {
-	wc := new(wechat.WeChat)
-	return wc
+	*wechat.WeChat // WeChat 控制器
 }
