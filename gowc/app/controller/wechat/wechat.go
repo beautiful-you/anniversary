@@ -158,8 +158,7 @@ func componentverifyticket() string {
 	ca := lcfg.Cache()
 	str, err := ca.Get("ComponentVerifyTicket")
 	if err != nil {
-		return str
+		return "error"
 	}
-	fmt.Println("ComponentVerifyTicket no cache")
-	return ""
+	return str
 }
