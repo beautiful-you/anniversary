@@ -143,7 +143,11 @@ func (w *WeChat) AuthEvent(c *gin.Context) {
 func authEventHandler(msg message.MixMessage) *message.Reply {
 	if msg.InfoType == "component_verify_ticket" {
 		ca := lcfg.Cache()
-		ca.Set("ComponentVerifyTicket", msg.ComponentVerifyTicket)
+		err := ca.Set("ComponentVerifyTicket", msg.ComponentVerifyTicket)
+		if err != nil {
+			fmt.Println("cache error cvt")
+			return nil
+		}
 		return nil
 	}
 	return nil

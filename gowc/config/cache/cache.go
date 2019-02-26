@@ -18,7 +18,7 @@ func New() *Cache {
 }
 
 const (
-	setURL = "http://202.182.118.203:5645/set?key=%s&value%s"
+	setURL = "http://202.182.118.203:5645/set?key=%s&value=%s"
 	getURL = "http://202.182.118.203:5645/get?key=%s"
 )
 
