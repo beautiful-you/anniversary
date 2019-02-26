@@ -16,5 +16,8 @@ func Set(key string, x interface{}, t time.Duration) {
 // Get 获取缓存
 func Get(key string) (string, bool) {
 	s, b := ca.Get(key)
-	return s.(string), b
+	if b {
+		return s.(string), b
+	}
+	return "error", false
 }
