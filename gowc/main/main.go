@@ -1,9 +1,7 @@
 package main
 
-import "fmt"
+import "github.com/beautiful-you/anniversary/gowc"
 
 func main() {
-	URL := fmt.Sprintf("a=%sb=%sc=%s", "1", "2", "3")
-	fmt.Println(URL)
-	// gowc.Start()
+	gowc.Start()
 }
