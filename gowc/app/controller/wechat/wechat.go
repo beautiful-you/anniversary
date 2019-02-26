@@ -153,6 +153,11 @@ func authEventHandler(msg message.MixMessage) *message.Reply {
 	return nil
 }
 
+// VerifyFile 微信文件效验
+func (w *WeChat) VerifyFile(c *gin.Context) {
+	c.Writer.WriteString("65e10e6cda0f37d81cdffaf5a3441979")
+}
+
 // componentverifyticket
 func componentverifyticket() string {
 	ca := lcfg.Cache()

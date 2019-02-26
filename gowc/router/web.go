@@ -9,6 +9,7 @@ var ctr = new(controller.Controller)
 
 // WEB ...
 func WEB(app *gin.Engine) {
+	app.Any("SaDcNh3pRG.txt", ctr.WeChat.VerifyFile)
 	wc := app.Group("/wechat/public/account")
 	{
 		wc.Any("auth_event", ctr.WeChat.AuthEvent)
