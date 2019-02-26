@@ -12,7 +12,8 @@ import (
 const (
 	ComponentTokenURL = "https://api.weixin.qq.com/cgi-bin/component/api_component_token"
 	PreAuthCodeURL    = "https://api.weixin.qq.com/cgi-bin/component/api_create_preauthcode?component_access_token=%s"
-	AuthURL           = "https://mp.weixin.qq.com/safe/bindcomponent?action=bindcomponent&auth_type=3&no_scan=1&component_appid=%s&pre_auth_code=%s&redirect_uri=%s&auth_type=xxx&biz_appid=xxxx#wechat_redirect"
+	// AuthURL           = "https://mp.weixin.qq.com/safe/bindcomponent?action=bindcomponent&auth_type=3&no_scan=1&component_appid=%s&pre_auth_code=%s&redirect_uri=%s&auth_type=xxx&biz_appid=xxxx#wechat_redirect"
+	AuthURL = "https://mp.weixin.qq.com/cgi-bin/componentloginpage?component_appid=%s&pre_auth_code=%s&redirect_uri=%s&auth_type=3"
 )
 
 // ResComponentAccessToken ComponentAccessToken
