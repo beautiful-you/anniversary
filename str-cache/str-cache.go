@@ -6,7 +6,7 @@ import (
 	cache "github.com/patrickmn/go-cache"
 )
 
-var ca = cache.New(time.Minute*10, time.Minute*10)
+var ca = cache.New(time.Minute*120, time.Minute*10)
 
 // Set 设置缓存
 func Set(key string, x interface{}, t time.Duration) {

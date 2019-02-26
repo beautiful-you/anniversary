@@ -14,17 +14,28 @@ func main() {
 }
 func get(rw http.ResponseWriter, req *http.Request) {
 	key := req.FormValue("key")
+	if len(key) < 1 {
+		rw.Write([]byte("error"))
+		return
+	}
 	str, bool := cache.Get(key)
 	if bool {
 		rw.Write([]byte(str))
 		return
 	}
-	rw.Write([]byte(""))
+	rw.Write([]byte("error"))
 }
 func set(rw http.ResponseWriter, req *http.Request) {
 	key := req.FormValue("key")
+	if len(key) < 1 {
+		rw.Write([]byte("error"))
+		return
+	}
 	value := req.FormValue("value")
-	// timeD := req.FormValue("time")
+	if len(value) < 1 {
+		rw.Write([]byte("error"))
+		return
+	}
 	cache.Set(key, value, 120*time.Minute)
-	rw.Write([]byte(""))
+	rw.Write([]byte("success"))
 }

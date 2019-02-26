@@ -1,10 +1,9 @@
 package config
 
 import (
-	"time"
+	"github.com/beautiful-you/anniversary/gowc/config/cache"
 
 	"github.com/beautiful-you/anniversary/gowc/config/ow"
-	cache "github.com/patrickmn/go-cache"
 )
 
 // Config 配置相关
@@ -25,7 +24,7 @@ func (cfg *Config) OW() *ow.OpenWeChat {
 }
 
 // ca Cache配置相关
-var ca = cache.New(time.Minute*10, time.Minute*10)
+var ca = cache.New()
 
 // Cache Cache配置相关
 func (cfg *Config) Cache() *cache.Cache {

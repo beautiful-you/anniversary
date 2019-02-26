@@ -3,7 +3,6 @@ package wechat
 import (
 	"errors"
 	"fmt"
-	"time"
 
 	"github.com/beautiful-you/anniversary/wechat/platforms"
 
@@ -97,17 +96,18 @@ func (w *WeChat) Test(c *gin.Context) {
 	lcfg := new(config.Config)
 	ca := lcfg.Cache()
 	if c.Request.FormValue("ca") == "set" {
-		ca.Set("s", "字符串", time.Minute*15)
+		ca.Set("s", "字符串")
 		c.Writer.WriteString(c.Request.FormValue("ca"))
 		//return
 	}
 	fmt.Println(ca.Get("s"))
-	str, bool := ca.Get("s")
-	if bool {
-		c.Writer.WriteString(str.(string))
-		//return
+	str, err := ca.Get("s")
+	if err !=nil {
+		c.Writer.WriteString("error")
+		return
 	}
-	c.Writer.WriteString("error")
+	c.Writer.WriteString(str)
+	
 
 }
 
@@ -144,7 +144,7 @@ func (w *WeChat) AuthEvent(c *gin.Context) {
 func authEventHandler(msg message.MixMessage) *message.Reply {
 	if msg.InfoType == "component_verify_ticket" {
 		ca := lcfg.Cache()
-		ca.Set("ComponentVerifyTicket", msg.ComponentVerifyTicket, time.Minute*15)
+		ca.Set("ComponentVerifyTicket", msg.ComponentVerifyTicket)
 		return nil
 	}
 	return nil
@@ -153,9 +153,9 @@ func authEventHandler(msg message.MixMessage) *message.Reply {
 // componentverifyticket
 func componentverifyticket() string {
 	ca := lcfg.Cache()
-	str, bool := ca.Get("ComponentVerifyTicket")
-	if bool {
-		return str.(string)
+	str, err := ca.Get("ComponentVerifyTicket")
+	if err != nil {
+		return str
 	}
 	fmt.Println("ComponentVerifyTicket no cache")
 	return ""
