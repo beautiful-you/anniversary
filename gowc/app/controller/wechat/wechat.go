@@ -102,12 +102,11 @@ func (w *WeChat) Test(c *gin.Context) {
 	}
 	fmt.Println(ca.Get("s"))
 	str, err := ca.Get("s")
-	if err !=nil {
+	if err != nil {
 		c.Writer.WriteString("error")
 		return
 	}
 	c.Writer.WriteString(str)
-	
 
 }
 

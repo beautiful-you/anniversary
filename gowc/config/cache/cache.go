@@ -24,7 +24,7 @@ const (
 
 // Set 设置缓存
 func (ca *Cache) Set(key, value string) error {
-	url := fmt.Sprint(setURL, key, value)
+	url := fmt.Sprintf(setURL, key, value)
 	str, err := httpGet(url)
 	if err != nil {
 		return err
@@ -37,7 +37,7 @@ func (ca *Cache) Set(key, value string) error {
 
 // Get 获取缓存
 func (ca *Cache) Get(key string) (string, error) {
-	url := fmt.Sprint(getURL, key)
+	url := fmt.Sprintf(getURL, key)
 	str, err := httpGet(url)
 	if err != nil {
 		return "", err

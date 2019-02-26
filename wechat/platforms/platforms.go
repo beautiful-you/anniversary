@@ -51,7 +51,7 @@ func ComponentAccessToken(AppID, AppSecret, cvt string) (*ResComponentAccessToke
 // PreAuthCode 获取预授权码 pre_auth_code
 func PreAuthCode(AppID, ComponentAccessToken string) (*ResPreAuthCode, error) {
 	// 获取预授权码 pre_auth_code
-	url := fmt.Sprint(PreAuthCodeURL, ComponentAccessToken)
+	url := fmt.Sprintf(PreAuthCodeURL, ComponentAccessToken)
 	body, err := util.PostJSON(url, map[string]string{"component_appid": AppID})
 	if err != nil {
 		return nil, err
