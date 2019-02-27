@@ -27,7 +27,35 @@ var lcfg = new(config.Config)
 
 // AuthCall ... 授权后回调地址
 func (w *WeChat) AuthCall(c *gin.Context) {
+	// 获取授权码
+	authCode := c.Request.FormValue("auth_code")
+	if len(authCode) < 1 {
+		c.Writer.WriteString("非法请求")
+		return
+	}
+	// 获取 component_verify_ticket
+	cvt := componentverifyticket()
+	if cvt == "" {
+		fmt.Println("获取不到缓存中的 component_verify_ticket")
+		c.Writer.WriteString("获取不到缓存中的 component_verify_ticket")
+		return
+	}
 
+	resComponentAccessToken, err := platforms.ComponentAccessToken(lcfg.OW().AppID, lcfg.OW().AppSecret, cvt)
+	if err != nil {
+		fmt.Println(err)
+		c.Writer.WriteString("获取 ComponentAccessToken 出现错误, 错误信息：" + resComponentAccessToken.ErrMsg)
+		return
+	}
+
+	resAuthInfo, err := platforms.AuthInfo(lcfg.OW().AppID, resComponentAccessToken.ComponentAccessToken, authCode)
+	if err != nil {
+		fmt.Println(err)
+		c.Writer.WriteString("获取 resAuthInfo 出现错误, 错误信息：" + resComponentAccessToken.ErrMsg)
+		return
+	}
+	aat := resAuthInfo.AuthorizationInfo.AuthorizerAccessToken
+	c.Writer.WriteString(aat)
 }
 
 // AuthURL ... 授权地址
